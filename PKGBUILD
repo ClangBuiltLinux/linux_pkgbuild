@@ -69,6 +69,23 @@ export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
 export KBUILD_BUILD_TIMESTAMP="$(date -Ru${SOURCE_DATE_EPOCH:+d @$SOURCE_DATE_EPOCH})"
 
+# Set all the Rust related environment variables the way they are proposed in
+# RFC69. This package was proposed as one that would break, so this allows
+# checking that assertion and reviewing what the actual differences are.
+# c.f. https://gitlab.archlinux.org/archlinux/rfcs/-/merge_requests/69
+RUSTFLAGS+=' -C debuginfo=2'
+RUSTFLAGS+=' -C strip=none'
+RUSTFLAGS+=' -C lto=fat'
+RUSTFLAGS+=' -C codegen-units=1'
+RUSTFLAGS+=' -C opt-level=3'
+RUSTFLAGS+=' -C embed-bitcode=yes'
+export CARGO_PROFILE_RELEASE_DEBUG=2
+export CARGO_PROFILE_RELEASE_STRIP=false
+export CARGO_HOME="$srcdir"
+export CARGO_PROFILE_RELEASE_LTO=true
+export CARGO_PROFILE_RELEASE_CODEGEN_UNITS=1
+export CARGO_PROFILE_RELEASE_OPT_LEVEL=3
+
 prepare() {
   cd $_srcname
 
